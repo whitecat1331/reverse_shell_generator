@@ -24,14 +24,15 @@ def get_ip(interface):
 
 
 # add feature to scan directory for supported languages
-SUPPORTEDLANGUAGES=['python','bash','php','java','pearl','netcat','ruby']
+SUPPORTEDLANGUAGES=os.listdir("shells")
 #Script Switches
 HELP=Switch('-h', func=lambda: print("python reverse_shell_generator.py language ip port"))
-LANGUAGE=Switch('-l')
+LANGUAGE=Switch('-l', regex=re.compile("^[a-z]+$"))
 IP=Switch('-i', regex=Connection.IP_REGEX)
 PORT=Switch('-p', regex=Connection.PORT_REGEX)
 # convert all script switches to a list
 SCRIPT_SWITCHES = Switch.switches_to_list(HELP, LANGUAGE, IP, PORT)
+
 def main():
     # side project switch esc and caps
     # parse input to switches
@@ -56,10 +57,17 @@ def main():
         sys.exit()
 
 
-    # validate language
-    if language not in SUPPORTEDLANGUAGES:
-        print(f"{language} is not supported. Supported Languages: {*SUPPORTEDLANGUAGES}")
-            sys.exit()
+    # validate language command
+    valid_language = False
+    for supported_language in SUPPORTEDLANGUAGES:
+        if language.lower() in supported_language.lower():
+            valid_language = True
+
+    if not valid_language:
+        # strip off the file extension whem printing
+        print(f"Not a valid language. supported languages: (SUPPORTEDLANGUAGES)")
+        sys.exit()
+
 
     # validate ip
     ip.set_regex(IP.get_regex())
@@ -72,6 +80,7 @@ def main():
     if not port.has_valid_input():
         print("Incorrect Port")
         sys.exit()
+
 
 
 
