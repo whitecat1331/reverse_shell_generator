@@ -25,6 +25,8 @@ def get_ip(interface):
 
 # add feature to scan directory for supported languages
 SUPPORTEDLANGUAGES=os.listdir("shells")
+#mark end of list
+SUPPORTEDLANGUAGES.append("EOL")
 #Script Switches
 HELP=Switch('-h', func=lambda: print("python reverse_shell_generator.py language ip port"))
 LANGUAGE=Switch('-l', regex=re.compile("^[a-z]+$"))
@@ -37,12 +39,6 @@ def main():
     # side project switch esc and caps
     # parse input to switches
     argv = Switch.parse_input(sys.argv)
-
-    # move to bottom later
-    # check switches
-    for arg in argv:
-        if arg.get_value() in argv:
-            arg.get_func()()
 
     # used only positonal arguments
     if len(pos_argv) == 3:
@@ -58,16 +54,14 @@ def main():
 
 
     # validate language command
-    valid_language = False
-    for supported_language in SUPPORTEDLANGUAGES:
-        if language.lower() in supported_language.lower():
-            valid_language = True
+    # get index of break
+    for index, supported_language in enumerate(SUPPORTEDLANGUAGES):
+        if language.get_value().lower() in supported_language.lower():
+            break
 
-    if not valid_language:
-        # strip off the file extension whem printing
+    if supported_language == "EOL":
         print(f"Not a valid language. supported languages: (SUPPORTEDLANGUAGES)")
         sys.exit()
-
 
     # validate ip
     ip.set_regex(IP.get_regex())
@@ -80,6 +74,16 @@ def main():
     if not port.has_valid_input():
         print("Incorrect Port")
         sys.exit()
+
+    # load shell
+    raw_shell = load_shell(SUPPORTEDLANGUAGES[index])
+    print(raw_shell)
+
+
+
+
+    # create new shell
+
 
 
 
